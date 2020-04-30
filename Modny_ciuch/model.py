@@ -401,4 +401,4 @@ def menu():
                            style=style)
     print(stock_item)
 
-ui = mc.FashionStoreShellApp("fashionstore.pickle")
+ui = FashionStoreShellApp("fashionstore.pickle")
