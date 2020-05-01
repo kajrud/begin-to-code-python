@@ -271,13 +271,177 @@ class FashionStoreShellApp():
         Powłoka do zarządzania sklepem
         :param filename: plik z zatowarowaniem
         """
-        FashionStoreShellApp.__filename = filename
+        self.__filename = filename
         try:
             self.__shop = FashionStore.load(filename)
         except:
             print("Ladowanie danych nie powiodło się")
             print("Tworzenie pustego sklepu")
             self.__shop = FashionStore()
+
+    def create_new_stock_item(self):
+        """
+        Tworzy nowy towar i dodaje go do magazynu.
+        :return:
+        """
+        print("""
+            Tworzenie nowego towaru
+            1: Sukienka
+            2: Spodnie
+            3: Kapelusz
+            4: Bluzka
+            5: Dżinsy
+            """)
+        item = int(input("Jaki rodzaj towaru chcesz dodać? "))
+        if item == 1:
+            print("Dodawanie sukienki")
+            stock_ref = input("Podaj numer magazynowy: ")
+            price = float(input("Podaj cenę: "))
+            color = input("Podaj kolor: ")
+            location = input("Podaj lokalizację: ")
+            pattern = input("Podaj fason: ")
+            size = input("Podaj rozmiar: ")
+            stock_item = Dress(stock_ref=stock_ref,
+                               price=price,
+                               color=color,
+                               location=location,
+                               pattern=pattern,
+                               size=size)
+
+        elif item == 2:
+            print("Dodawanie spodni")
+            stock_ref = input("Podaj numer magazynowy: ")
+            price = float(input("Podaj cenę: "))
+            color = input("Podaj kolor: ")
+            location = input("Podaj lokalizację: ")
+            pattern = input("Podaj fason: ")
+            length = input("Podaj długość nogawki: ")
+            waist = input("Podaj obwód pasa: ")
+            stock_item = Pants(stock_ref=stock_ref,
+                               price=price,
+                               color=color,
+                               location=location,
+                               pattern=pattern,
+                               length=length,
+                               waist=waist)
+
+        elif item == 3:
+            print("Dodawanie kapelusza")
+            stock_ref = input("Podaj numer magazynowy: ")
+            price = float(input("Podaj cenę: "))
+            color = input("Podaj kolor: ")
+            location = input("Podaj lokalizację: ")
+            size = input("Podaj rozmiar: ")
+            decoration = input("Podaj zdobienie: ")
+            stock_item = Hats(stock_ref=stock_ref,
+                              price=price,
+                              color=color,
+                              location=location,
+                              size=size,
+                              decoration=decoration)
+
+        elif item == 4:
+            print("Dodawanie bluzki")
+            stock_ref = input("Podaj numer magazynowy: ")
+            price = float(input("Podaj cenę: "))
+            color = input("Podaj kolor: ")
+            location = input("Podaj lokalizację: ")
+            size = input("Podaj rozmiar: ")
+            sleeve = input("Podaj dlugość rękawa: ")
+            stock_item = Hats(stock_ref=stock_ref,
+                              price=price,
+                              color=color,
+                              location=location,
+                              size=size,
+                              sleeve=sleeve)
+
+        elif item == 5:
+            print("Dodawanie dżinsów")
+            stock_ref = input("Podaj numer magazynowy: ")
+            price = float(input("Podaj cenę: "))
+            color = input("Podaj kolor: ")
+            location = input("Podaj lokalizację: ")
+            pattern = input("Podaj fason: ")
+            length = input("Podaj długość nogawki: ")
+            waist = input("Podaj obwód pasa: ")
+            style = input("Podaj model: ")
+            stock_item = Pants(stock_ref=stock_ref,
+                               price=price,
+                               color=color,
+                               location=location,
+                               pattern=pattern,
+                               length=length,
+                               waist=waist,
+                               style=style)
+        try:
+            self.__shop.store_new_stock_item(stock_item)
+            print("Dodano produkt")
+        except Exception as e:
+            print (f"Dodawanie nie powiodło się, błąd {e}")
+
+
+    def add_stock(self):
+        """
+        Znajduje towar w magazynie, a następnie
+        dodaje do magazynu liczbę sztuk istniejącego już towaru
+        :return:
+        """
+        item_stock_ref = input("Podaj numer magazynowy: ")
+        item = self.__shop.find_stock_item(item_stock_ref)
+
+        if item == None:
+            print ("Nie znaleziono towaru")
+            return
+
+        print(item)
+
+        number_to_add = int(input("Podaj ilość towaru do dodania: "))
+        if number_to_add == 0:
+            print ("Nic nie dodano")
+
+        elif number_to_add > StockItem.max_stock_add:
+            print(f"Zbyt duża liczba, maksymalnie możesz dodać {StockItem.max_stock_add} sztuk towaru")
+
+        else:
+            item.add_stock(number_to_add)
+            print(item)
+
+    def sell_stock(self):
+        """
+        Sprzedaż towaru. Wyszukuje towar, następnie odczytuje liczbę sztuk na sprzedaż.
+        Pozwala na zakup maksymalnie takiej ilości jaka jest w magazynie.
+        :return:
+        """
+        print("Sprzedaż")
+
+        item_stock_ref = input("Podaj numer magazynowy: ")
+        item = self.__shop.find_stock_item(item_stock_ref)
+
+        if item == None:
+            print ("Nie znaleziono towaru")
+            return
+
+        print(f"Sprzedaż {item}")
+        if item.__stock_level == 0:
+            print("Brak towaru w magazynie")
+            return
+
+        number_sold = int(input("Ile sztuk sprzedano? (0 aby wyjść): "))
+
+        if number_sold == 0:
+            print("Zaniechano sprzedaży")
+            return
+
+        if number_sold > item.__stock_level:
+            print(f"Brak wystarczającej ilości towaru w magazynie. Maksymalna ilość: {item.stock_level}")
+            return
+
+        item.sell_stock(number_sold)
+        print("Sprzedano towar")
+
+    def do_report(self):
+        print("Raport magazynowy")
+        print(self.__shop)
 
     def main_menu(self):
         prompt = """Sklep odzieżowy
@@ -300,7 +464,7 @@ class FashionStoreShellApp():
                 elif command == 4:
                     self.do_report()
                 elif command == 5:
-                    self.__shop.save(FashionStoreShellApp.__filename)
+                    self.__shop.save(self.__filename)
                     print ("Zapisano dane sklepu")
                     break
                 else:
@@ -309,96 +473,6 @@ class FashionStoreShellApp():
             except:
                 print("Coś poszło nie tak, spróbuj jeszcze raz")
                 continue
-def menu():
-    print("""
-    Tworzenie nowego towaru
-    1: Sukienka
-    2: Spodnie
-    3: Kapelusz
-    4: Bluzka
-    5: Dżinsy
-    """)
-    item = int(input("Jaki rodzaj towaru chcesz dodać? "))
-    if item == 1:
-        print("Dodawanie sukienki")
-        stock_ref = input("Podaj numer magazynowy: ")
-        price = float(input("Podaj cenę: "))
-        color = input("Podaj kolor: ")
-        location = input("Podaj lokalizację: ")
-        pattern = input("Podaj fason: ")
-        size = input("Podaj rozmiar: ")
-        stock_item = Dress(stock_ref=stock_ref,
-                           price=price,
-                           color=color,
-                           location=location,
-                           pattern=pattern,
-                           size=size)
 
-    elif item == 2:
-        print("Dodawanie spodni")
-        stock_ref = input("Podaj numer magazynowy: ")
-        price = float(input("Podaj cenę: "))
-        color = input("Podaj kolor: ")
-        location = input("Podaj lokalizację: ")
-        pattern = input("Podaj fason: ")
-        length = input("Podaj długość nogawki: ")
-        waist = input("Podaj obwód pasa: ")
-        stock_item = Pants(stock_ref=stock_ref,
-                           price=price,
-                           color=color,
-                           location=location,
-                           pattern=pattern,
-                           length=length,
-                           waist=waist)
-
-    elif item == 3:
-        print("Dodawanie kapelusza")
-        stock_ref = input("Podaj numer magazynowy: ")
-        price = float(input("Podaj cenę: "))
-        color = input("Podaj kolor: ")
-        location = input("Podaj lokalizację: ")
-        size = input("Podaj rozmiar: ")
-        decoration = input("Podaj zdobienie: ")
-        stock_item = Hats(stock_ref=stock_ref,
-                           price=price,
-                           color=color,
-                           location=location,
-                           size=size,
-                           decoration=decoration)
-
-    elif item == 4:
-        print("Dodawanie bluzki")
-        stock_ref = input("Podaj numer magazynowy: ")
-        price = float(input("Podaj cenę: "))
-        color = input("Podaj kolor: ")
-        location = input("Podaj lokalizację: ")
-        size = input("Podaj rozmiar: ")
-        sleeve = input("Podaj dlugość rękawa: ")
-        stock_item = Hats(stock_ref=stock_ref,
-                           price=price,
-                           color=color,
-                           location=location,
-                           size=size,
-                           sleeve=sleeve)
-
-    elif item == 5:
-        print("Dodawanie dżinsów")
-        stock_ref = input("Podaj numer magazynowy: ")
-        price = float(input("Podaj cenę: "))
-        color = input("Podaj kolor: ")
-        location = input("Podaj lokalizację: ")
-        pattern = input("Podaj fason: ")
-        length = input("Podaj długość nogawki: ")
-        waist = input("Podaj obwód pasa: ")
-        style = input("Podaj model: ")
-        stock_item = Pants(stock_ref=stock_ref,
-                           price=price,
-                           color=color,
-                           location=location,
-                           pattern=pattern,
-                           length=length,
-                           waist=waist,
-                           style=style)
-    print(stock_item)
 
 ui = FashionStoreShellApp("fashionstore.pickle")
