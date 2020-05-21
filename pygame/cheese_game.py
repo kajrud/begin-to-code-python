@@ -23,5 +23,18 @@ class ImageDemo():
     surface.blit(cheeseImage, cheesePos)
     pygame.display.flip()
 
-ImageDemo.do_image_demo()
+    cheeseX = 40
+    cheeseY = 60
 
+    clock = pygame.time.Clock()
+
+    for i in range (1, 100):
+        clock.tick(30)
+        surface.fill(white)
+        cheeseX += 1
+        cheeseY += 1
+        cheesePos = (cheeseX, cheeseY)
+        surface.blit(cheeseImage, cheesePos)
+        pygame.display.flip()
+
+ImageDemo.do_image_demo()
