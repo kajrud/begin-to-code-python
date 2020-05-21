@@ -14,7 +14,7 @@ class ImageDemo():
     size = (width, height)
 
     surface = pygame.display.set_mode(size)
-    pygame.display.set_caption("Przykład obrazu")
+    pygame.display.set_caption("Ser po skosie")
 
     white = (255, 255, 255)
     surface.fill(white)
@@ -29,7 +29,7 @@ class ImageDemo():
     clock = pygame.time.Clock()
 
     for i in range (1, 100):
-        clock.tick(30)
+        clock.tick(10)
         surface.fill(white)
         cheeseX += 1
         cheeseY += 1
